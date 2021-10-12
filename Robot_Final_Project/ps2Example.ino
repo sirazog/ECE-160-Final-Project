@@ -76,4 +76,6 @@ void loop()//everything in loop is just the dualshock code pulled from the examp
     Serial.print(",");
     Serial.println(ps2x.Analog(PSS_RX), DEC);
   }
+  
+  delayMicroseconds(50*1000);//don't know if we need this
 }

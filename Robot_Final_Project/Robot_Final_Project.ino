@@ -25,4 +25,28 @@ void loop()
   setMotorSpeed(RIGHT_MOTOR, halfSpd);//run at half speed
   setMotorSpeed(LEFT_MOTOR, halfSpd);
   delayMicroseconds(1000*MS);//for 1 second
+  
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//rotate counterclockwise
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+  setMotorSpeed(RIGHT_MOTOR, halfSpd);
+  setMotorSpeed(LEFT_MOTOR, halfSpd);
+  delayMicroseconds(1000*MS);//for one second
+  
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//rotate clockwise
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorSpeed(RIGHT_MOTOR, halfSpd);
+  setMotorSpeed(LEFT_MOTOR, halfSpd);
+  delayMicroseconds(1000*MS);//for one second
+  
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//turn counterclockwise
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorSpeed(RIGHT_MOTOR, fullSpd);
+  setMotorSpeed(LEFT_MOTOR, halfSpd);
+  delayMicroseconds(1000*MS);//for one second
+  
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//turn clockwise
+  setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+  setMotorSpeed(RIGHT_MOTOR, halfSpd);
+  setMotorSpeed(LEFT_MOTOR, fullSpd);
+  delayMicroseconds(1000*MS);//for one second
 }

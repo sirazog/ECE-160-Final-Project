@@ -88,7 +88,7 @@ void moveGripper(bool forward)
   {
     if (angle > 0)
     {
-      angle++;
+      angle--;
       gripper.write(angle);
     }
   }

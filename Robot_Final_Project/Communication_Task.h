@@ -90,7 +90,7 @@ void loop()//everything in loop is just the dualshock code pulled from the examp
   delayMicroseconds(50*1000);//don't know if we need this
   
   if(decodeIR(&IRresults)){
-    Serial.println(IRresults.command, HEX);
+    //Serial.println(IRresults.command, HEX);
     translateIR();
   }
 }

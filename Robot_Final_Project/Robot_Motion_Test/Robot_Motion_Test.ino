@@ -54,7 +54,7 @@ void loop()
   disableMotor(RIGHT_MOTOR);//disable the motors
   disableMotor(LEFT_MOTOR);
   
-  for(int angle = 0; angle <= 180; angle += 10)//open and close servo
+  /*for(int angle = 0; angle <= 180; angle += 10)//open and close servo
   {
     gripper.write(angle);
     delayMicroseconds(100*MS);
@@ -63,6 +63,6 @@ void loop()
   {
     gripper.write(angle);
     delayMicroseconds(100*MS);
-  }
-}
+  } 
+} */
 }

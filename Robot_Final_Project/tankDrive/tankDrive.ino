@@ -16,13 +16,18 @@ int angle = 0;
 #define pressures false
 #define rumble false
 
+#define stickMax 255
+#define stickHalf 255/2
+
 PS2X ps2x;
+
+byte vibrate = 0;
 
 #define MS 1000 //conversion for miliseconds
 void setup()
 {
   Serial.begin(57600);
-  delay(500 * MS);
+  delayMicroseconds(500 * MS);
 
   setupRSLK();
   enableMotor(LEFT_MOTOR);
@@ -36,53 +41,48 @@ void setup()
 
 void loop()
 {
-  enableMotor(LEFT_MOTOR);
-  enableMotor(RIGHT_MOTOR);
-  
-  ps2x.read_gamepad(false, 0);//read controller and set large motor to not spin
-  analogDrive(ps2x.Analog(PSS_LY), ps2x.Analog(PSS_RY));
-  if (ps2x.Button(PSB_L1))
+  ps2x.read_gamepad(false, vibrate);//read controller and set large motor to not spin
+  //Serial.print("LFT: ");
+  //Serial.println(ps2x.Analog(PSS_LY));
+  analogDrive(ps2x.Analog(PSS_LY), ps2x.Analog(PSS_RY));//run the analogDrive function with the analog stick inputs
+  if (ps2x.Button(PSB_L1))//run moveGripper based on which button is pushed
   {
     moveGripper(false);
   }
   else if (ps2x.Button(PSB_R1))
   {
     moveGripper(true);
-  } 
-
-  Serial.print("Stick Values:");
-      Serial.print(ps2x.Analog(PSS_LY), DEC); //Left stick, Y axis. Other options: LX, RY, RX  
-      Serial.print(",");
-      Serial.print(ps2x.Analog(PSS_LX), DEC); 
-      Serial.print(",");
-      Serial.print(ps2x.Analog(PSS_RY), DEC); 
-      Serial.print(",");
-      Serial.println(ps2x.Analog(PSS_RX), DEC);
+  }
 }
 
-void analogDrive(int leftStick, int rightStick)
+void analogDrive(int rightStick, int leftStick)
 {
-  if (ps2x.Analog(PSS_LY) >= 123) //if the left stick is pusheed downward, leave a deadzone of about 5
+  Serial.println("driving");
+  if (leftStick < stickHalf+5) //if the left stick is pushed downward
   {
+    Serial.println("left back");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(LEFT_MOTOR, map(ps2x.Analog(PSS_LY), 123, 255, 0, 100));//and set the motor speed
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
   }
-  else if (ps2x.Analog(PSS_LY) <= 133) //if the left stick is pushed forward
+  else if (leftStick >= stickHalf-5) //if the left stick is pushed forward
   {
+    Serial.println("left forward");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
-    setMotorSpeed(LEFT_MOTOR, map(ps2x.Analog(PSS_LY), 133, 0, 0, 100));
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
   }
 
   //same code for the right stick and motor
-  if (ps2x.Analog(PSS_RY) >= 123) //if the left stick is pusheed downward
+  if (rightStick < stickHalf+5) //if the left stick is pusheed downward
   {
+    Serial.println("right back");
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(RIGHT_MOTOR, map(ps2x.Analog(PSS_LY), 123, 255, 0, 100));//and set the motor speed
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 100));//and set the motor speed
   }
-  else if (ps2x.Analog(PSS_RY) <= 133) //if the left stick is pushed forward
+  else if (rightStick >= stickHalf-5) //if the left stick is pushed forward
   {
+    Serial.println("right forward");
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
-    setMotorSpeed(RIGHT_MOTOR, map(ps2x.Analog(PSS_LY), 133, 0, 0, 100));
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
   }
 }
 

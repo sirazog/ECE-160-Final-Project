@@ -34,7 +34,7 @@ void loop()
   //Serial.println("Hello World");
   
   if(decodeIR(&IRresults)){
-    Serial.println(IRresults.command, HEX);
+    Serial.println(IRresults.command);
     translateIR();
   }
 }

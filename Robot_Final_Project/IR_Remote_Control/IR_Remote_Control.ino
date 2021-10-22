@@ -1,5 +1,7 @@
 #include "TinyIR.h"
-
+#include "SimpleRSLK.h"
+#include <ROMI_MOTOR_POWER.h>
+#include "Servo.h"
 
 //Ir sensor
 #define UP 0
@@ -8,8 +10,9 @@
 #define RIGHT 3
 #define IDLE 4
 int STATE = IDLE;
-int IRPin = 36;
+int IRPin = 19;
 
+IRData IRresults;
 
 #define MS 1000 //conversion for miliseconds
 
@@ -18,12 +21,20 @@ void setup()
   Serial.begin(57600);
   delayMicroseconds(500 * MS);
   initTinyIRReceiver();//Ir receiver
+
+  pinMode(IRPin, INPUT);
+  
+  setupRSLK();
+  enableMotor(LEFT_MOTOR);
+  enableMotor(RIGHT_MOTOR);
 }
 
-void loop()//everything in loop is just the dualshock code pulled from the example 
+void loop()
 { 
+  //Serial.println("Hello World");
+  
   if(decodeIR(&IRresults)){
-    //Serial.println(IRresults.command, HEX);
+    Serial.println(IRresults.command, HEX);
     translateIR();
   }
 }
@@ -120,5 +131,5 @@ void translateIR() {
       //sets everything to default
       Serial.println("other button");
       break;
+  }
 }
-

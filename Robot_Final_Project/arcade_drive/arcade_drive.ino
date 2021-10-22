@@ -22,6 +22,7 @@ int angle = 0;
 PS2X ps2x;
 
 byte vibrate = 0;
+int error = 0;
 
 #define MS 1000 //conversion for miliseconds
 void setup()
@@ -37,6 +38,31 @@ void setup()
   gripper.write(angle);
 
   ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);//configure the pins
+
+  if(error == 0){
+      Serial.print("Found Controller, configured successful ");
+      Serial.print("pressures = ");
+    if (pressures)
+      Serial.println("true ");
+    else
+      Serial.println("false");
+    Serial.print("rumble = ");
+    if (rumble)
+      Serial.println("true)");
+    else
+      Serial.println("false");
+      Serial.println("Try out all the buttons, X will vibrate the controller, faster as you press harder;");
+      Serial.println("holding L1 or R1 will print out the analog stick values.");
+      Serial.println("Note: Go to www.billporter.info for updates and to report bugs.");
+    }  else if(error == 1)
+      Serial.println("No controller found, check wiring, see readme.txt to enable debug. visit www.billporter.info for troubleshooting tips");
+     
+    else if(error == 2)
+      Serial.println("Controller found but not accepting commands. see readme.txt to enable debug. Visit www.billporter.info for troubleshooting tips");
+
+    else if(error == 3)
+      Serial.println("Controller refusing to enter Pressures mode, may not support it. ");
+    delayMicroseconds(1000*1000);
 }
 
 void loop()
@@ -58,34 +84,43 @@ void loop()
 void analogDrive(int leftStick, int rightStick)
 {
   Serial.println("driving");
-  if (leftStick < stickHalf+5) //if the left stick is pushed downward
+  if (leftStick < stickHalf + 5) //if the left stick is pushed downward
   {
-    Serial.println("left back");
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
+    /*
+      Serial.println("left back");
+      setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
+      setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
+      setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
+      setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
+    */
+
+    setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(BOTH_MOTORS, map(leftStick, stickHalf, stickMax, 0, 100));
   }
-  else if (leftStick >= stickHalf-5) //if the left stick is pushed forward
+  else if (leftStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     Serial.println("left forward");
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
+    /*setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
     setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
-    setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
+    setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, 0, 0, 100)); */
+
+    setMotorDirection(BOTH_MOTORS, MOTOR_DIR_FORWARD);
+    setMotorSpeed(BOTH_MOTORS, map(leftStick, stickHalf, 0, 0, 100));
   }
 
   if (rightStick < stickHalf + 5) {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorSpeed(RIGHT_MOTOR,map(rightStick, stickHalf, 0, 0, 100));
-  } else if (rightStick > stickHalf -5) {
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
+  } else if (rightStick > stickHalf - 5) {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(RIGHT_MOTOR,map(rightStick, stickHalf, 0, 0, 100));
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
   }
+  
 }
 
 void moveGripper(bool forward)

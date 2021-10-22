@@ -3,8 +3,8 @@
 #include "Servo.h"
 #include "PS2X_lib.h"
 
-//Servo gripper;
-//int angle = 0;
+Servo gripper;
+int angle = 0;
 
 //using recommended pinout
 #define PS2_DAT         14 //P1.7 <-> brown wire
@@ -35,8 +35,8 @@ void setup()
   enableMotor(LEFT_MOTOR);
   enableMotor(RIGHT_MOTOR);
 
- // gripper.attach(SRV_0);
-  //gripper.write(angle);
+ gripper.attach(SRV_0);
+  gripper.write(angle);
 
   ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);//configure the pins
 
@@ -89,9 +89,24 @@ void loop() {
     if (ps2x.Button(PSB_SQUARE)) {
     state = 4;
   }
+
+  if(ps2x.Button(PSB_PAD_DOWN))
+  {
+    state = 0;
+  }
+
+  if (ps2x.Button(PSB_L1))//run moveGripper based on which button is pushed
+  {
+    moveGripper(false);
+  }
+  else if (ps2x.Button(PSB_R1))
+  {
+    moveGripper(true);
+  }
   
   Serial.println(state);
   alternateDrive();
+  delayMicroseconds(500);
 }
 
 void alternateDrive() {
@@ -127,4 +142,25 @@ void alternateDrive() {
       setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
       setMotorSpeed(RIGHT_MOTOR, 255);//and set the motor speed;
     }
+}
+
+void moveGripper(bool forward)
+{
+  if (forward)
+  {
+    if (angle < 180)
+    {
+      angle++;
+      gripper.write(angle);
+    }
+  }
+  else
+  {
+    if (angle > 0)
+    {
+      angle--;
+      gripper.write(angle);
+    }
+  }
+
 }

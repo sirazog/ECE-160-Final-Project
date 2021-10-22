@@ -44,7 +44,7 @@ void loop()
   ps2x.read_gamepad(false, vibrate);//read controller and set large motor to not spin
   //Serial.print("LFT: ");
   //Serial.println(ps2x.Analog(PSS_LY));
-  analogDrive(ps2x.Analog(PSS_LY), ps2x.Analog(PSS_RY));//run the analogDrive function with the analog stick inputs
+  analogDrive(ps2x.Analog(PSS_LY), ps2x.Analog(PSS_RX));//run the analogDrive function with the analog stick inputs
   if (ps2x.Button(PSB_L1))//run moveGripper based on which button is pushed
   {
     moveGripper(false);
@@ -55,7 +55,7 @@ void loop()
   }
 }
 
-void analogDrive(int rightStick, int leftStick)
+void analogDrive(int leftStick, int rightStick)
 {
   Serial.println("driving");
   if (leftStick < stickHalf+5) //if the left stick is pushed downward
@@ -75,6 +75,17 @@ void analogDrive(int rightStick, int leftStick)
     setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
   }
 
+  else if (rightStick < stickHalf + 5) {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(RIGHT_MOTOR,map(rightStick, stickHalf, 0, 0, 100));
+  } else if (rightStick > stickHalf -5) {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorSpeed(RIGHT_MOTOR,map(rightStick, stickHalf, 0, 0, 100));
+  }
 }
 
 void moveGripper(bool forward)

@@ -61,28 +61,36 @@ void analogDrive(int rightStick, int leftStick)
   if (leftStick < stickHalf+5) //if the left stick is pushed downward
   {
     Serial.println("left back");
+    enableMotor(LEFT_MOTOR);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
     setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
   }
   else if (leftStick >= stickHalf-5) //if the left stick is pushed forward
   {
     Serial.println("left forward");
+    enableMotor(LEFT_MOTOR);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
     setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
+  } else {
+    disableMotor(LEFT_MOTOR);
   }
 
   //same code for the right stick and motor
   if (rightStick < stickHalf+5) //if the left stick is pusheed downward
   {
     Serial.println("right back");
+    enableMotor(RIGHT_MOTOR);
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
     setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 100));//and set the motor speed
   }
   else if (rightStick >= stickHalf-5) //if the left stick is pushed forward
   {
     Serial.println("right forward");
+    enableMotor(RIGHT_MOTOR);
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
     setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
+  } else {
+    disableMotor(RIGHT_MOTOR);
   }
 }
 

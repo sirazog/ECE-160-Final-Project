@@ -75,7 +75,7 @@ void analogDrive(int leftStick, int rightStick)
     setMotorSpeed(RIGHT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
   }
 
-  else if (rightStick < stickHalf + 5) {
+  if (rightStick < stickHalf + 5) {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);

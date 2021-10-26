@@ -79,6 +79,7 @@ void loop()
   {
     moveGripper(true);
   }
+  delayMicroseconds(250);
 }
 
 void analogDrive(int rightStick, int leftStick)

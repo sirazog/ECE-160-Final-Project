@@ -17,7 +17,7 @@ uint16_t fastSpeed = 20;
 uint8_t lineColor = LIGHT_LINE;
 
 Servo gripper;
-int angle = 0;
+int angle = 40;
 
 //using recommended pinout
 #define PS2_DAT         14 //P1.7 <-> brown wire
@@ -235,13 +235,13 @@ void analogDrive(int leftStick, int rightStick)
   {
     //    Serial.println("left back");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//set motor direction to backward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 100));//and set the motor speed
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 75));//and set the motor speed
   }
   else if (leftStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     //    Serial.println("left forward");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//same code but forward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 100));
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 75));
   }
 
   //same code for the right stick and motor
@@ -249,13 +249,13 @@ void analogDrive(int leftStick, int rightStick)
   {
     //    Serial.println("right back");
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//set motor direction to backward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 100));//and set the motor speed
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 75));//and set the motor speed
   }
   else if (rightStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     //    Serial.println("right forward");
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//same code but forward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 100));
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 75));
   }
 }
 
@@ -263,7 +263,7 @@ void moveGripper(bool forward)
 {
   if (forward)
   {
-    if (angle < 180)
+    if (angle < 95)
     {
       angle++;
       gripper.write(angle);
@@ -271,7 +271,7 @@ void moveGripper(bool forward)
   }
   else
   {
-    if (angle > 0)
+    if (angle > 40)
     {
       angle--;
       gripper.write(angle);
@@ -290,8 +290,8 @@ void drop()
     setMotorSpeed(BOTH_MOTORS, 20);
   }
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-  delayMicroseconds(1000*1500);
+  delayMicroseconds(1000*2000);
   setMotorSpeed(BOTH_MOTORS, 0);
-  gripper.write(0);
+  gripper.write(60);
   STATE = CONTROL;
 }

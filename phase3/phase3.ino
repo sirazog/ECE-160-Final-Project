@@ -228,34 +228,34 @@ void controlled()
     moveGripper(true);
   }
 }
-void analogDrive(int leftStick, int rightStick)
+void analogDrive(int rightStick, int leftStick)
 {
   //  Serial.println("driving");
   if (leftStick < stickHalf + 5) //if the left stick is pushed downward
   {
     //    Serial.println("left back");
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//set motor direction to backward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 75));//and set the motor speed
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 30));//and set the motor speed
   }
   else if (leftStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     //    Serial.println("left forward");
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//same code but forward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 75));
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 30));
   }
 
   //same code for the right stick and motor
   if (rightStick < stickHalf + 5) //if the left stick is pusheed downward
   {
     //    Serial.println("right back");
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//set motor direction to backward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 75));//and set the motor speed
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 30));//and set the motor speed
   }
   else if (rightStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     //    Serial.println("right forward");
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//same code but forward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 75));
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 30));
   }
 }
 
@@ -271,7 +271,7 @@ void moveGripper(bool forward)
   }
   else
   {
-    if (angle > 40)
+    if (angle > 30)
     {
       angle--;
       gripper.write(angle);
@@ -283,15 +283,15 @@ void drop()
 {
   int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
   setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);
-  while(dist < 10)
+  while(dist < 8)
   {
     dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
     Serial1.println(dist);
     setMotorSpeed(BOTH_MOTORS, 20);
   }
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-  delayMicroseconds(1000*2000);
+  delayMicroseconds(1000*1500);
   setMotorSpeed(BOTH_MOTORS, 0);
   gripper.write(60);
-  //STATE = CONTROL;
+  STATE = CONTROL;
 }

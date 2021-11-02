@@ -180,6 +180,7 @@ void loop()
       break;
   }
   //Serial1.println(STATE);
+  Serial1.println((6787 / (analogRead(SHRP_DIST_C_PIN) - 3) - 4));
   //  delayMicroseconds(1000*50);
 }
 

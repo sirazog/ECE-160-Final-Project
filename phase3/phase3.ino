@@ -49,6 +49,7 @@ byte vibrate = 0;
 #define IDLE 0
 #define AUTO 1
 #define CONTROL 2
+#define BACKAUTO 3
 
 int STATE = CONTROL;
 
@@ -145,6 +146,10 @@ void loop()
       {
         STATE = CONTROL;
       }
+      else if (ps2x.Button(PSB_START))
+      {
+        STATE = BACKAUTO;
+      }
       //Serial.println(STATE);
       //autonomous();
       break;
@@ -156,6 +161,19 @@ void loop()
         //        turned = false;
         //        finishedturn = false;
       }
+      else if (ps2x.Button(PSB_START))
+      {
+        STATE = BACKAUTO;
+      }
+      //Serial.println(STATE);
+      //      controlled();
+      break;
+    case BACKAUTO:
+      if (ps2x.Button(PSB_SELECT))
+      {
+        STATE = CONTROL;
+      }
+      autonomousRetrieval();
       break;
     default:
       STATE = CONTROL;
@@ -226,7 +244,53 @@ void autonomous()
   */
   //Serial.println(linePos);
 }
+void autonomousRetrieval()
+{
+  int backDist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);//needs to be changed to other dist sensor
+  uint32_t linePos = getLinePosition(sensorCalVal, lineColor);
+  Serial.println("autonomous");
 
+
+  if (linePos > 2000 && linePos < 3000) {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+
+    setMotorSpeed(LEFT_MOTOR, fastSpeed);
+    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
+  } else if (linePos > 3500 && linePos < 4000) {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(LEFT_MOTOR, normalSpeed);
+    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+  }
+  else if (linePos < 2000 && linePos != 0)
+  {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorSpeed(LEFT_MOTOR, fastSpeed);
+    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+    //    turned = true;
+  }
+  else if (linePos > 4000 && linePos != 0)
+  {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(LEFT_MOTOR, fastSpeed);
+    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+    //    turned = true;
+  }
+  else {
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorSpeed(LEFT_MOTOR, forwardSpeed);
+    setMotorSpeed(RIGHT_MOTOR, forwardSpeed);
+    if (backDist < 5)
+    {
+      gripper.write(105);
+      STATE = AUTO;
+    }
+  }
+}
 void controlled()
 {
   Serial.println("controlled");

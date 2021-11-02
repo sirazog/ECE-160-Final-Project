@@ -246,7 +246,7 @@ void autonomous()
 }
 void autonomousRetrieval()
 {
-  int backDist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);//needs to be changed to other dist sensor
+  int backDist = (6787 / (analogRead(SHRP_DIST_C_PIN) - 3) - 4);//needs to be changed to other dist sensor
   uint32_t linePos = getLinePosition(sensorCalVal, lineColor);
   Serial.println("autonomous");
 

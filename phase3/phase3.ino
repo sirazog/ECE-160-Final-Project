@@ -131,25 +131,28 @@ void loop()
   switch (STATE)
   {
     case AUTO:
-      if (ps2x.Button(PSB_R2))
+      autonomous();
+      if (ps2x.Button(PSB_SELECT))//was PSB_R2
       {
         STATE = CONTROL;
       }
       //Serial.println(STATE);
-      autonomous();
+      //autonomous();
       break;
     case CONTROL:
-      if (ps2x.Button(PSB_R2))
+      controlled();
+      if (ps2x.Button(PSB_SELECT))
       {
         STATE = AUTO;
-//        turned = false;
-//        finishedturn = false;
+        //        turned = false;
+        //        finishedturn = false;
       }
       //Serial.println(STATE);
-      controlled();
+//      controlled();
       break;
   }
-
+  //Serial1.println(STATE);
+//  delayMicroseconds(1000*50);
 }
 
 void autonomous()
@@ -157,7 +160,7 @@ void autonomous()
   int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
   uint32_t linePos = getLinePosition(sensorCalVal, lineColor);
   Serial.println("autonomous");
-  
+
 
   if (linePos > 2000 && linePos < 3000) {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
@@ -177,7 +180,7 @@ void autonomous()
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
-//    turned = true;
+    //    turned = true;
   }
   else if (linePos > 4000 && linePos != 0)
   {
@@ -185,7 +188,7 @@ void autonomous()
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
-//    turned = true;
+    //    turned = true;
   }
   else {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
@@ -197,21 +200,21 @@ void autonomous()
       drop();
     }
   }
-  
+
   //  Serial1.println(dist);
   /*
-  Serial1.println(turned);
-  if (turned == true && finishedTurn == true)
-  {
+    Serial1.println(turned);
+    if (turned == true && finishedTurn == true)
+    {
     Serial1.println("WE'VE TURNED AND ARE STRAIGHT NOW");
     if (dist < 20 && dist != 0)
     {
       disableMotor(BOTH_MOTORS);
       Serial1.println("STOP MOTORS");
     }
-  }
+    }
   */
-  Serial.println(linePos);
+  //Serial.println(linePos);
 }
 
 void controlled()
@@ -263,7 +266,7 @@ void moveGripper(bool forward)
 {
   if (forward)
   {
-    if (angle < 95)
+    if (angle < 105)
     {
       angle++;
       gripper.write(angle);
@@ -271,27 +274,28 @@ void moveGripper(bool forward)
   }
   else
   {
-    if (angle > 30)
+    if (angle > 20)
     {
       angle--;
       gripper.write(angle);
     }
   }
+  //Serial1.println(angle);
 }
 
 void drop()
 {
   int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
   setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);
-  while(dist < 8)
+  while (dist < 9)
   {
     dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
     Serial1.println(dist);
     setMotorSpeed(BOTH_MOTORS, 20);
   }
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-  delayMicroseconds(1000*1500);
+  delayMicroseconds(1000 * 2000);
   setMotorSpeed(BOTH_MOTORS, 0);
-  gripper.write(60);
-  STATE = CONTROL;
+  gripper.write(20);
+  //STATE = AUTO;
 }

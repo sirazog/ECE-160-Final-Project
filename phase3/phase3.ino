@@ -1,3 +1,10 @@
+#include <Bump_Switch.h>
+#include <Encoder.h>
+#include <GP2Y0A21_Sensor.h>
+#include <QTRSensors.h>
+#include <Romi_Motor_Power.h>
+#include <RSLK_Pins.h>
+#include <SimpleRSLK.h>
 #include "SimpleRSLK.h"
 #include "Servo.h"
 #include "PS2X_lib.h"
@@ -7,9 +14,9 @@ uint16_t sensorCalVal[LS_NUM_SENSORS];
 uint16_t sensorMaxVal[LS_NUM_SENSORS];
 uint16_t sensorMinVal[LS_NUM_SENSORS];
 
-uint16_t normalSpeed = 10;
+uint16_t normalSpeed = 15;
 uint16_t fastSpeed = 20;
-uint16_t forwardSpeed = 40;
+uint16_t forwardSpeed = 27;
 
 /* Valid values are either:
     DARK_LINE  if your floor is lighter than your line
@@ -58,6 +65,7 @@ void setup()
   gripper.write(angle);
 
   ps2x.config_gamepad(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);//configure the pins
+  ps2x.read_gamepad(false, vibrate);//read controller and set large motor to not spin
 
   setupRSLK();
   /* Left button on Launchpad */
@@ -148,12 +156,13 @@ void loop()
         //        turned = false;
         //        finishedturn = false;
       }
-      //Serial.println(STATE);
-//      controlled();
+      break;
+    default:
+      STATE = CONTROL;
       break;
   }
   //Serial1.println(STATE);
-//  delayMicroseconds(1000*50);
+  //  delayMicroseconds(1000*50);
 }
 
 void autonomous()
@@ -295,8 +304,8 @@ void drop()
     setMotorSpeed(BOTH_MOTORS, 20);
   }
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-  delayMicroseconds(1000 * 2000);
+  delayMicroseconds(1000 * 1300);
   setMotorSpeed(BOTH_MOTORS, 0);
   gripper.write(20);
-  //STATE = AUTO;
+  //  STATE = AUTO;
 }

@@ -9,6 +9,7 @@ uint16_t sensorMinVal[LS_NUM_SENSORS];
 
 uint16_t normalSpeed = 10;
 uint16_t fastSpeed = 20;
+uint16_t forwardSpeed = 40;
 
 /* Valid values are either:
     DARK_LINE  if your floor is lighter than your line
@@ -193,8 +194,8 @@ void autonomous()
   else {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(LEFT_MOTOR, normalSpeed);
-    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
+    setMotorSpeed(LEFT_MOTOR, forwardSpeed);
+    setMotorSpeed(RIGHT_MOTOR, forwardSpeed);
     if (dist < 5)
     {
       drop();

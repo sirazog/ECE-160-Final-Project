@@ -191,19 +191,19 @@ void autonomous()
   Serial.println("autonomous");
 
 
-  if (linePos > 2000 && linePos < 3000) {
+  if (linePos > 2000 && linePos < 3000) {//veer right
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
 
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, normalSpeed);
-  } else if (linePos > 3500 && linePos < 4000) {
+  } else if (linePos > 3500 && linePos < 4000) {//veer left
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, normalSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
   }
-  else if (linePos < 2000 && linePos != 0)
+  else if (linePos < 2000 && linePos != 0)//turn left
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
@@ -211,7 +211,7 @@ void autonomous()
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
     //    turned = true;
   }
-  else if (linePos > 4000 && linePos != 0)
+  else if (linePos > 4000 && linePos != 0)//turn right
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
@@ -252,13 +252,13 @@ void autonomousRetrieval()
   Serial.println("autonomous");
 
 
-  if (linePos > 3500 && linePos < 4000) {//linePos > 2000 && linePos < 3000
+  if (linePos > 3500 && linePos < 4000) {//should veer left
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
 
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, normalSpeed);
-  } else if (linePos > 2000 && linePos < 3000) {//linePos > 3500 && linePos < 4000
+  } else if (linePos > 2000 && linePos < 3000) {//should veer right
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(LEFT_MOTOR, normalSpeed);
@@ -266,16 +266,16 @@ void autonomousRetrieval()
   }
   else if (linePos > 4000 && linePos != 0)//linePos < 2000 && linePos != 0
   {
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
     //    turned = true;
   }
   else if (linePos < 2000 && linePos != 0)//linePos > 4000 && linePos != 0
   {
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_FORWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
     //    turned = true;

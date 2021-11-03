@@ -251,33 +251,32 @@ void autonomousRetrieval()
   uint32_t linePos = getLinePosition(sensorCalVal, lineColor);
   Serial.println("autonomous");
 
-
-  if (linePos > 3500 && linePos < 4000) {//should veer left
+  if (linePos > 1000 && linePos < 3000) {//veer right
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
 
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, normalSpeed);
-  } else if (linePos > 2000 && linePos < 3000) {//should veer right
+  } else if (linePos > 3000 && linePos < 5000) {//veer left
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(LEFT_MOTOR, normalSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
   }
-  else if (linePos > 4000 && linePos != 0)//linePos < 2000 && linePos != 0
+  else if (linePos < 1000 && linePos != 0)//turn left
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(LEFT_MOTOR, fastSpeed);
-    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+    setMotorSpeed(LEFT_MOTOR, normalSpeed);
+    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
     //    turned = true;
   }
-  else if (linePos < 2000 && linePos != 0)//linePos > 4000 && linePos != 0
+  else if (linePos > 5000 && linePos != 0)//turn right
   {
-    setMotorDirection(RIGHT_MOTOR, MOTOR_FORWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
-    setMotorSpeed(LEFT_MOTOR, fastSpeed);
-    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+    setMotorSpeed(LEFT_MOTOR, normalSpeed);
+    setMotorSpeed(RIGHT_MOTOR, normalSpeed);
     //    turned = true;
   }
   else {
@@ -285,11 +284,13 @@ void autonomousRetrieval()
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
     setMotorSpeed(LEFT_MOTOR, forwardSpeed);
     setMotorSpeed(RIGHT_MOTOR, forwardSpeed);
-    if (backDist < 5)
-    {
+    /*
+      if (backDist < 5)
+      {
       gripper.write(105);
       STATE = AUTO;
-    }
+      }
+    */
   }
 }
 void controlled()

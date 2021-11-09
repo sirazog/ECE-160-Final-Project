@@ -176,7 +176,7 @@ void loop()
       autonomousRetrieval();
       break;
     default:
-      STATE = CONTROL;
+      STATE = AUTO;
       break;
   }
   //Serial1.println(STATE);
@@ -373,5 +373,5 @@ void drop()
   delayMicroseconds(1000 * 1300);
   setMotorSpeed(BOTH_MOTORS, 0);
   gripper.write(20);
-  //  STATE = AUTO;
+  STATE = AUTO;
 }

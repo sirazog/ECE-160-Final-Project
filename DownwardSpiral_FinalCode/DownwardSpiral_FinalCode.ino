@@ -44,7 +44,7 @@ uint8_t lineColor = LIGHT_LINE;
 Servo gripper;
 int angle = 40;
 
-//using recommended pinout
+//using recommended pinout for the ps2 receiver
 #define PS2_DAT         14 //P1.7 <-> brown wire
 #define PS2_CMD         15 //P1.6 <-> orange wire
 #define PS2_SEL         34 //P2.3 <-> yellow wire (also called attention)
@@ -73,10 +73,9 @@ int STATE = CONTROL;
 
 void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(9600);
+  Serial.begin(115200);//regular serial port
+  Serial1.begin(9600);//bluetooth serial port
   delayMicroseconds(500 * MS);
-  Serial1.println("test");
   gripper.attach(SRV_0);
   gripper.write(angle);
 
@@ -84,9 +83,6 @@ void setup()
   ps2x.read_gamepad(false, vibrate);//read controller and set large motor to not spin
 
   setupRSLK();
-  /* Left button on Launchpad */
-  //setupwaitBtn(ps2x.Button(PSB_L2));
-  /* Red led in rgb led */
   setupLed(RED_LED);
   clearMinMax(sensorMinVal, sensorMaxVal);
   enableMotor(BOTH_MOTORS);
@@ -94,13 +90,9 @@ void setup()
 
 void floorCalibration() {
   /* Place Robot On Floor (no line) */
-  delayMicroseconds(MS * 2000);
-  String btnMsg = "Push left button on Launchpad to begin calibration.\n";
-  btnMsg += "Make sure the robot is on the floor away from the line.\n";
+  delayMicroseconds(MS * 3000);
 
-  delayMicroseconds(MS * 1000);
-
-  Serial.println("Running calibration on floor");
+  Serial.println("Running calibration on floor");//replace serial prints with comments
   simpleCalibrate();
   Serial.println("Reading floor values complete");
 
@@ -128,13 +120,13 @@ void simpleCalibrate() {
   disableMotor(BOTH_MOTORS);
 }
 
-bool isCalibrationComplete = false;
+bool isCalibrationComplete = false;//will be changed to true at the end of callibration
 
 void loop()
 {
   ps2x.read_gamepad(false, vibrate);//read controller and set large motor to not spin
 
-  /* Run this setup only once */
+  /* Check if calibration was completed */
   if (isCalibrationComplete == false) {
     floorCalibration();
     isCalibrationComplete = true;
@@ -168,7 +160,7 @@ void loop()
       STATE = AUTO;
       break;
   }
-  Serial1.println((6787 / (analogRead(SHRP_DIST_C_PIN) - 3) - 4));
+  Serial1.println((6787 / (analogRead(SHRP_DIST_C_PIN) - 3) - 4));//used to check the distance read by the sensor
 }
 
 void autonomous()
@@ -207,7 +199,8 @@ void autonomous()
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
   }
-  else {
+  else 
+  {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, forwardSpeed);

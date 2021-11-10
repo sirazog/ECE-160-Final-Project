@@ -262,6 +262,7 @@ void controlled()
     moveGripper(true);
   }
 }
+
 void analogDrive(int rightStick, int leftStick)
 {
   if (leftStick < stickHalf + 5) //if the left stick is pushed downward

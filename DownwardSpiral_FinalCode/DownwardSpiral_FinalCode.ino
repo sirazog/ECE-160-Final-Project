@@ -13,9 +13,22 @@
       PS2 Receiver and controller
       Servo with 3d printed claw attachment
 
-   This code is
+   This code is meant to be the final code for the spelunker rescue competition
+   The robot starts by autonomatically calibrating its line following sensor (please ensure that the robot is on the tournament surface)
+   Then the robot will start in its control state
+   switching to the autonomous state can be done with the select button on the ps2 controller
+
+   Functions:
+      floorCalibration() - From line follower example, part of calibration process 
+      simpleCalibrate() - From line follower example, part of calibration process
+      autonomous() - Makes the robot move autonomously using the line follower and IR distance sensor
+      controlled() - Makes the robot move via input from the ps2 controller and both the analogDrive() and moveGripper() functions
+      analogDrive() - Actually sends output to the motors via the ps2 inputs
+      moveGripper() - Opens or closes the gripper
+      drop() - Autonomously drops the spelunker
+
 */
-#include <Bump_Switch.h>
+#include <Bump_Switch.h>;//include necessary libraries
 #include <Encoder.h>
 #include <GP2Y0A21_Sensor.h>
 #include <QTRSensors.h>
@@ -31,6 +44,7 @@ uint16_t sensorCalVal[LS_NUM_SENSORS];
 uint16_t sensorMaxVal[LS_NUM_SENSORS];
 uint16_t sensorMinVal[LS_NUM_SENSORS];
 
+//speeds chosen for autonomous movement
 uint16_t normalSpeed = 15;
 uint16_t fastSpeed = 20;
 uint16_t forwardSpeed = 27;
@@ -54,6 +68,7 @@ int angle = 40;
 #define pressures false
 #define rumble false
 
+//analog stick values
 #define stickMax 255
 #define stickHalf 255/2
 
@@ -63,6 +78,7 @@ byte vibrate = 0;
 
 #define MS 1000 //conversion for miliseconds
 
+//definitions for the state machine
 #define IDLE 0
 #define AUTO 1
 #define CONTROL 2
@@ -88,6 +104,11 @@ void setup()
   enableMotor(BOTH_MOTORS);
 }
 
+/*
+ *  From line follower example, part of calibration process 
+ *  INPUTS: NONE
+ *  OUTPUTS: NONE
+ */
 void floorCalibration() {
   /* Place Robot On Floor (no line) */
   delayMicroseconds(MS * 3000);
@@ -103,6 +124,11 @@ void floorCalibration() {
   enableMotor(BOTH_MOTORS);
 }
 
+/*
+ *  From line follower example, part of calibration process 
+ *  INPUTS: NONE
+ *  OUTPUTS: NONE
+ */
 void simpleCalibrate() {
   /* Set both motors direction MOTOR_DIR_FORWARD */
   setMotorDirection(BOTH_MOTORS, MOTOR_DIR_FORWARD);
@@ -140,18 +166,23 @@ void loop()
                     lineColor);
 
 
+  /*
+   * State machine code (starts in controlled state)
+   * There are only 2 states, controlled and autonomous
+   * if the select button on the controller is pressed, the robot switches to whichever state it isn't currently in
+   */
   switch (STATE)
   {
     case AUTO:
       autonomous();
-      if (ps2x.Button(PSB_SELECT))//was PSB_R2
+      if (ps2x.Button(PSB_SELECT))//if the select button is pressed
       {
-        STATE = CONTROL;
+        STATE = CONTROL;//switch to controlled state
       }
       break;
     case CONTROL:
       controlled();
-      if (ps2x.Button(PSB_SELECT))
+      if (ps2x.Button(PSB_SELECT))//and vise verse
       {
         STATE = AUTO;
       }
@@ -163,6 +194,11 @@ void loop()
   Serial1.println((6787 / (analogRead(SHRP_DIST_C_PIN) - 3) - 4));//used to check the distance read by the sensor
 }
 
+/*
+ * This function makes the robot move autonomously using the line follower and IR distance sensor
+ * INPUTS: NONE
+ * OUTPUTS: NONE 
+ */
 void autonomous()
 {
   int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
@@ -170,44 +206,44 @@ void autonomous()
   Serial.println("autonomous");
 
 
-  if (linePos > 2000 && linePos < 3000)
-  { //veer right
+  if (linePos > 2000 && linePos < 3000)//if the robot is veering right
+  { 
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
 
-    setMotorSpeed(LEFT_MOTOR, fastSpeed);
+    setMotorSpeed(LEFT_MOTOR, fastSpeed);//adjust with the left motor
     setMotorSpeed(RIGHT_MOTOR, normalSpeed);
   }
-  else if (linePos > 3500 && linePos < 4000)
-  { //veer left
+  else if (linePos > 3500 && linePos < 4000)//if the robot is veering left
+  { 
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, normalSpeed);
-    setMotorSpeed(RIGHT_MOTOR, fastSpeed);
+    setMotorSpeed(RIGHT_MOTOR, fastSpeed);//adjust with the right motor
   }
-  else if (linePos < 2000 && linePos != 0)//turn left
+  else if (linePos < 2000 && linePos != 0)//if the robot needs to turn left
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//make the left motor move backwards
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
   }
-  else if (linePos > 4000 && linePos != 0)//turn right
+  else if (linePos > 4000 && linePos != 0)//if the robot needs to turn right
   {
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//make the right motor move backwards
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
     setMotorSpeed(LEFT_MOTOR, fastSpeed);
     setMotorSpeed(RIGHT_MOTOR, fastSpeed);
   }
-  else 
+  else //if the robot is centered enogh on the line
   {
-    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
+    setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//both motors move forward
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);
-    setMotorSpeed(LEFT_MOTOR, forwardSpeed);
+    setMotorSpeed(LEFT_MOTOR, forwardSpeed);//and a faster speed
     setMotorSpeed(RIGHT_MOTOR, forwardSpeed);
-    if (dist < 5)
+    if (dist < 5)//if the robot is moving foward and sees a wall nearby (at the drop zone)
     {
-      drop();
+      drop();//run the drop code
     }
   }
 }

@@ -313,17 +313,18 @@ void moveGripper(bool forward)
 
 void drop()
 {
-  int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
-  setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);
-  while (dist < 9)
+  int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);//read distance sensor
+  setMotorDirection(BOTH_MOTORS, MOTOR_DIR_BACKWARD);//move backwards
+  while (dist < 9)//while the robot isn't far enough
   {
-    dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);
-    Serial1.println(dist);
-    setMotorSpeed(BOTH_MOTORS, 20);
+    dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);//keep reading the distance
+    Serial1.println(dist);//we printed to double check the values
+    setMotorSpeed(BOTH_MOTORS, 20);//move backwards slowly
   }
-  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);
-  delayMicroseconds(MS * 1300);
-  setMotorSpeed(BOTH_MOTORS, 0);
-  gripper.write(20);
-  STATE = AUTO;
+  //after the robot is far away enough from the wall
+  setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//switch one motor to forward so it turns
+  delayMicroseconds(MS * 1300);//for 1300 ms
+  setMotorSpeed(BOTH_MOTORS, 0);//then turn off both motors
+  gripper.write(20);//open the claw
+  STATE = AUTO;//set state to auto so the robot just follows the line out
 }

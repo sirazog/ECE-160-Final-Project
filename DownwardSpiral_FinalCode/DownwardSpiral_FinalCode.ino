@@ -264,20 +264,19 @@ void controlled()
 }
 
 /*
- * Runs the motors in the ps2 analog inputs
- * INPUTS: 
+ * Runs the motors based on the ps2 analog inputs
+ * INPUTS: rightStick (y value of the right analog stick), leftStick (y value of the left analog stick)
+ * OUTPUTS: NONE
  */
 void analogDrive(int rightStick, int leftStick)
 {
   if (leftStick < stickHalf + 5) //if the left stick is pushed downward
   {
-    //    Serial.println("left back");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
     setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 30));//and set the motor speed
   }
   else if (leftStick >= stickHalf - 5) //if the left stick is pushed forward
   {
-    //    Serial.println("left forward");
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
     setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 30));
   }

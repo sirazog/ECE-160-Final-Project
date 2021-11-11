@@ -44,7 +44,7 @@ uint16_t sensorCalVal[LS_NUM_SENSORS];
 uint16_t sensorMaxVal[LS_NUM_SENSORS];
 uint16_t sensorMinVal[LS_NUM_SENSORS];
 
-//speeds chosen for autonomous movement
+//chosen speeds and servo angles
 uint8_t normalSpeed = 15;
 uint8_t fastSpeed = 20;
 uint8_t forwardSpeed = 27;
@@ -187,7 +187,7 @@ void loop()
         STATE = AUTO;
       }
       break;
-    default:
+    default://default state is just autonomous
       STATE = AUTO;
       break;
   }

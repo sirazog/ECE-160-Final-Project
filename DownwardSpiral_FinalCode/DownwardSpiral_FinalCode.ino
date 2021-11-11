@@ -45,9 +45,12 @@ uint16_t sensorMaxVal[LS_NUM_SENSORS];
 uint16_t sensorMinVal[LS_NUM_SENSORS];
 
 //speeds chosen for autonomous movement
-uint16_t normalSpeed = 15;
-uint16_t fastSpeed = 20;
-uint16_t forwardSpeed = 27;
+uint8_t normalSpeed = 15;
+uint8_t fastSpeed = 20;
+uint8_t forwardSpeed = 27;
+uint8_t maxControlSpeed = 30;
+uint8_t maxAngle = 105;
+uint8_t minAngle = 20;
 
 /* Valid values are either:
     DARK_LINE  if your floor is lighter than your line
@@ -273,47 +276,57 @@ void analogDrive(int rightStick, int leftStick)
   if (leftStick < stickHalf + 5) //if the left stick is pushed downward
   {
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, 30));//and set the motor speed
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, stickMax, 0, maxControlSpeed));//and set the motor speed
   }
   else if (leftStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     setMotorDirection(LEFT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
-    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, 30));
+    setMotorSpeed(LEFT_MOTOR, map(leftStick, stickHalf, 0, 0, maxControlSpeed));
   }
 
   //same code for the right stick and motor
   if (rightStick < stickHalf + 5) //if the left stick is pusheed downward
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_BACKWARD);//set motor direction to backward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, 30));//and set the motor speed
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, stickMax, 0, maxControlSpeed));//and set the motor speed
   }
   else if (rightStick >= stickHalf - 5) //if the left stick is pushed forward
   {
     setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//same code but forward
-    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, 30));
+    setMotorSpeed(RIGHT_MOTOR, map(rightStick, stickHalf, 0, 0, maxControlSpeed));
   }
 }
 
+/*
+ * Sends signals to the servo to open and close the gripper
+ * INPUTS: forward (boolean that says whether the gripper should be closed or opened)
+ * OUTPUTS: NONE
+ */
 void moveGripper(bool forward)
 {
-  if (forward)
+  if (forward)//if the gripper should be closed
   {
-    if (angle < 105)//replace magic numbers
+    if (angle < maxAngle)//and the servo is not yet at its max angle
     {
-      angle++;
-      gripper.write(angle);
+      angle++;//increase the angle
+      gripper.write(angle);//move the servo
     }
   }
-  else
+  else//if the gripper should be opened
   {
-    if (angle > 20)
+    if (angle > minAngle)//and the servo is not yet at its min angle
     {
-      angle--;
-      gripper.write(angle);
+      angle--;//decrease the angle
+      gripper.write(angle);//move the servo
     }
   }
 }
 
+/*
+ * Function used to drop the spelunker object at the end of its autonomous run
+ * INPUTS: NONE
+ * OUTPUTS: NONE
+ */
 void drop()
 {
   int dist = (6787 / (analogRead(SHRP_DIST_L_PIN) - 3) - 4);//read distance sensor
@@ -328,6 +341,6 @@ void drop()
   setMotorDirection(RIGHT_MOTOR, MOTOR_DIR_FORWARD);//switch one motor to forward so it turns
   delayMicroseconds(MS * 1300);//for 1300 ms
   setMotorSpeed(BOTH_MOTORS, 0);//then turn off both motors
-  gripper.write(20);//open the claw
+  gripper.write(minAngle);//open the claw
   STATE = AUTO;//set state to auto so the robot just follows the line out
 }

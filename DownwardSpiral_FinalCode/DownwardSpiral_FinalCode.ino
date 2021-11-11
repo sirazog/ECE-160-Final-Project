@@ -55,8 +55,8 @@ uint16_t forwardSpeed = 27;
 */
 uint8_t lineColor = LIGHT_LINE;
 
-Servo gripper;
-int angle = 40;
+Servo gripper;//gripper object
+int angle = 40;//starting angle for servo
 
 //using recommended pinout for the ps2 receiver
 #define PS2_DAT         14 //P1.7 <-> brown wire
@@ -72,7 +72,7 @@ int angle = 40;
 #define stickMax 255
 #define stickHalf 255/2
 
-PS2X ps2x;
+PS2X ps2x;//controller object
 
 byte vibrate = 0;
 
@@ -116,9 +116,6 @@ void floorCalibration() {
   Serial.println("Running calibration on floor");//replace serial prints with comments
   simpleCalibrate();
   Serial.println("Reading floor values complete");
-
-  btnMsg = "Push left button on Launchpad to begin line following.\n";
-  btnMsg += "Make sure the robot is on the line.\n";
   delayMicroseconds(MS * 1000);
 
   enableMotor(BOTH_MOTORS);
@@ -248,10 +245,13 @@ void autonomous()
   }
 }
 
+/*
+ * This function manages the input from the controller and runs the analogDrive function or moveGripper function when needed
+ * INPUTS: NONE
+ * OUTPUTS: NONE
+ */
 void controlled()
 {
-  Serial.println("controlled");
-
   analogDrive(ps2x.Analog(PSS_LY), ps2x.Analog(PSS_RY));//run the analogDrive function with the analog stick inputs
   if (ps2x.Button(PSB_L1))//run moveGripper based on which button is pushed
   {
@@ -263,6 +263,10 @@ void controlled()
   }
 }
 
+/*
+ * Runs the motors in the ps2 analog inputs
+ * INPUTS: 
+ */
 void analogDrive(int rightStick, int leftStick)
 {
   if (leftStick < stickHalf + 5) //if the left stick is pushed downward
@@ -295,7 +299,7 @@ void moveGripper(bool forward)
 {
   if (forward)
   {
-    if (angle < 105)
+    if (angle < 105)//replace magic numbers
     {
       angle++;
       gripper.write(angle);
